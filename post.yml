@@ -25,9 +25,10 @@ jobs:
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHANNEL: "@am_sc_likes"
-          SC_LIKES_URL: "https://soundcloud.com/andrej-monaxov-859528296/likes"
-          POST_OLD: "false"      # поставь "true", чтобы выложить и старые лайки
-          MAX_PER_RUN: "1"
+          SC_URL: "https://soundcloud.com/andrej-monaxov-859528296/sets/flex"
+          POST_OLD: "true"
+          MAX_PER_RUN: "10"
+          USE_MP3: "true"
         run: python bot.py
       - name: Save state
         run: |
