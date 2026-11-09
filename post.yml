@@ -1,0 +1,37 @@
+name: Post SoundCloud likes
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # каждые 30 минут
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: post-likes
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run bot
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHANNEL: "@am_sc_likes"
+          SC_LIKES_URL: "https://soundcloud.com/andrej-monaxov-859528296/likes"
+          POST_OLD: "false"      # поставь "true", чтобы выложить и старые лайки
+          MAX_PER_RUN: "1"
+        run: python bot.py
+      - name: Save state
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add state.json
+          git diff --cached --quiet || (git commit -m "update state" && git push)
